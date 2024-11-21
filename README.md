@@ -1,5 +1,3 @@
-This is a [Next.js](https://nextjs.org) project
-
 ## Installation and Running
 
 ### Prerequisites
@@ -8,11 +6,21 @@ This is a [Next.js](https://nextjs.org) project
 - [pnpm](https://pnpm.io/)
 
 ## Getting Started
-Clone the repo and install all dependencies:
 
+Clone the repository and navigate to the project directory:
 
+```bash
+git clone git@github.com:enemycnt/mpc-tss-wallet-frontend.git
+cd mpc-tss-wallet-frontend
+```
 
-Then, run the development server:
+Install all dependencies using `pnpm`:
+
+```bash
+pnpm install
+```
+
+Start the development server:
 
 ```bash
 pnpm dev
