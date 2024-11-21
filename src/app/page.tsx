@@ -1,95 +1,65 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import NewWalletButton from "@/components/application/NewWalletButton";
+import { Container, Stack, Table, Box, Button, Card } from "@chakra-ui/react";
+import Link from "next/link";
 
-export default function Home() {
+type Wallet = {
+  address: string;
+  pubkey: string;
+};
+type Wallets = [Wallet];
+
+export async function loadWallets() {
+  try {
+    // Call an external API endpoint to get posts
+    const res = await fetch(`${process.env.API_HOST}/wallets`);
+    const data = await res.json();
+
+    return data as { wallets: Wallets };
+  } catch (e) {
+    console.error(e);
+    return { wallets: [] };
+  }
+}
+
+export default async function Main() {
+  const { wallets } = await loadWallets();
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    <Container w="2xl">
+      <Card.Root>
+        <Card.Body gap="2">
+          <Stack>
+            <Box>
+              <NewWalletButton />
+            </Box>
+            {wallets.length > 0 ? (
+              <Table.Root size="md" striped>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.ColumnHeader>Account address</Table.ColumnHeader>
+                    <Table.ColumnHeader textAlign="end">
+                      Action
+                    </Table.ColumnHeader>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {wallets.map((wallet) => (
+                    <Table.Row key={wallet.address}>
+                      <Table.Cell>{wallet.address}</Table.Cell>
+                      <Table.Cell textAlign="end">
+                        <Link href={`/wallet/${wallet.address}`}>
+                          <Button variant="surface">Sign message</Button>
+                        </Link>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table.Root>
+            ) : (
+              <Box>No wallets</Box>
+            )}
+          </Stack>
+        </Card.Body>
+      </Card.Root>
+    </Container>
   );
 }
